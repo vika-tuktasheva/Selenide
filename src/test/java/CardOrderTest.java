@@ -1,13 +1,21 @@
 import com.codeborne.selenide.Condition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.Keys;
 
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
 
 public class CardOrderTest {
+
+    public static String generateDate(int changeDay) {
+
+        return LocalDate.now().plusDays(changeDay).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    }
 
     @BeforeEach
     public void setUp() {
@@ -16,21 +24,27 @@ public class CardOrderTest {
 
     @Test //тест с валидными значениями
     public void shouldSendForm() {
-        open("http://localhost:9999");
+        open("http://localhost:9999/");
         $("[data-test-id=city] input").setValue("Санкт-Петербург");
+        $("[data-test-id='date'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        String planningDate=generateDate(3);
+        $("[data-test-id='date'] input").setValue(planningDate);
         $("[data-test-id=name] input").setValue("Иванов Иван");
         $("[data-test-id=phone] input").setValue("+78884545321");
         $("[data-test-id=agreement]").click();
         $(".button").click();
         //проверка видимости уведомления
         $("[data-test-id=notification]").should(visible, Duration.ofSeconds(15));
-        $("[class=notification__content]").should(text("Встреча успешно забронирована на "+$("[data-test-id=date] input").getValue()));
+        $("[class=notification__content]").should(text("Встреча успешно забронирована на " + planningDate));
     }
 
     @Test //ввод неверного города
     public void shouldSendFormWhenWrongCity() {
         open("http://localhost:9999");
         $("[data-test-id=city] input").setValue("Новокузнецк");
+        $("[data-test-id='date'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        String planningDate=generateDate(3);
+        $("[data-test-id='date'] input").setValue(planningDate);
         $("[data-test-id=name] input").setValue("Иванов Иван");
         $("[data-test-id=phone] input").setValue("+78884545321");
         $("[data-test-id=agreement]").click();
@@ -42,6 +56,9 @@ public class CardOrderTest {
     public void shouldSendFormWhenWrongDate() {
         open("http://localhost:9999");
         $("[data-test-id=city] input").setValue("Санкт-Петербург");
+        $("[data-test-id='date'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        String planningDate=generateDate(3);
+        $("[data-test-id='date'] input").setValue(planningDate);
         $("[data-test-id=date] input").setValue("01.05.2022");
         $("[data-test-id=name] input").setValue("Иванов Иван");
         $("[data-test-id=phone] input").setValue("+78884545321");
@@ -54,6 +71,9 @@ public class CardOrderTest {
     public void shouldSendFormWhenWrongName() {
         open("http://localhost:9999");
         $("[data-test-id=city] input").setValue("Санкт-Петербург");
+        $("[data-test-id='date'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        String planningDate=generateDate(3);
+        $("[data-test-id='date'] input").setValue(planningDate);
         $("[data-test-id=name] input").setValue("Иванов Иван15");
         $("[data-test-id=phone] input").setValue("+78884545321");
         $("[data-test-id=agreement]").click();
@@ -65,6 +85,9 @@ public class CardOrderTest {
     public void shouldSendFormWhenWrongPhone() {
         open("http://localhost:9999");
         $("[data-test-id=city] input").setValue("Санкт-Петербург");
+        $("[data-test-id='date'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        String planningDate=generateDate(3);
+        $("[data-test-id='date'] input").setValue(planningDate);
         $("[data-test-id=name] input").setValue("Иванов Иван");
         $("[data-test-id=phone] input").setValue("+7888454532156");
         $("[data-test-id=agreement]").click();
@@ -76,7 +99,9 @@ public class CardOrderTest {
     public void shouldSendFormТoСonsent() {
         open("http://localhost:9999");
         $("[data-test-id=city] input").setValue("Санкт-Петербург");
-//        $("[data-test-id=date] input").setValue("08.07.2022");
+        $("[data-test-id='date'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        String planningDate=generateDate(3);
+        $("[data-test-id='date'] input").setValue(planningDate);
         $("[data-test-id=name] input").setValue("Иванов Иван");
         $("[data-test-id=phone] input").setValue("+78884545321");
 //        $("[data-test-id=agreement]").click();
